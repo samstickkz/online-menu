@@ -18,27 +18,29 @@ const Menu = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [quantities, setQuantities] = useState({});
-
-  const handleQuantityChange = (itemId, quantity) => {
-    setQuantities({
-      ...quantities,
-      [itemId]: quantity,
-    });
-  };
 
   const addItem = (item) => {
-    const quantity = quantities[item.id] ? parseInt(quantities[item.id]) : 1;
-    const itemWithQuantity = { ...item, quantity };
-    setSelectedItems([...selectedItems, itemWithQuantity]);
-    setTotal(total + item.price * itemWithQuantity.quantity);
+    const itemIndex = selectedItems.findIndex((i) => i.id === item.id);
+    let updatedItems;
+
+    if (itemIndex > -1) {
+      updatedItems = [...selectedItems];
+      updatedItems[itemIndex].quantity += 1;
+    } else {
+      updatedItems = [...selectedItems, { ...item, quantity: 1 }];
+    }
+
+    setSelectedItems(updatedItems);
+    setTotal(total + item.price);
   };
 
   const removeItem = (item) => {
-    const updatedItems = selectedItems.filter((i) => i.id !== item.id);
-    const removedItem = selectedItems.find((i) => i.id === item.id);
+    const updatedItems = selectedItems
+      .map((i) => (i.id === item.id ? { ...i, quantity: i.quantity - 1 } : i))
+      .filter((i) => i.quantity > 0);
+
     setSelectedItems(updatedItems);
-    setTotal(total - removedItem.price * removedItem.quantity);
+    setTotal(total - item.price);
   };
 
   const handleOrder = () => {
@@ -61,18 +63,7 @@ const Menu = () => {
               <span>
                 {item.name} - ₦{item.price}
               </span>
-              <div className="quantity-container">
-                <input
-                  type="number"
-                  min="1"
-                  value={quantities[item.id] || 1}
-                  onChange={(e) =>
-                    handleQuantityChange(item.id, e.target.value)
-                  }
-                  className="quantity-input"
-                />
-                <button onClick={() => addItem(item)}>Add</button>
-              </div>
+              <button onClick={() => addItem(item)}>Add</button>
             </li>
           ))}
         </ul>
@@ -86,18 +77,7 @@ const Menu = () => {
               <span>
                 {item.name} - ₦{item.price}
               </span>
-              <div className="quantity-container">
-                <input
-                  type="number"
-                  min="1"
-                  value={quantities[item.id] || 1}
-                  onChange={(e) =>
-                    handleQuantityChange(item.id, e.target.value)
-                  }
-                  className="quantity-input"
-                />
-                <button onClick={() => addItem(item)}>Add</button>
-              </div>
+              <button onClick={() => addItem(item)}>Add</button>
             </li>
           ))}
         </ul>
