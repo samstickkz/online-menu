@@ -53,8 +53,7 @@ const Menu = () => {
 
   return (
     <div className="menu-container">
-      <h1>Online Menu</h1>
-
+      <h1>NPJ Menu</h1>
       <div className={`menu-section ${showPaymentModal ? "blur" : ""}`}>
         <h2>Food</h2>
         <ul>
